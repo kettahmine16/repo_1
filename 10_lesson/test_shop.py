@@ -9,32 +9,26 @@ from pages.CheckoutPage import CheckoutPage
 import allure
 
 
-@pytest.fixture
-@allure.id("SHOP-1")
-@allure.severity("P1")
-@allure.epic("Интернет магазин")
-@allure.feature("SETUP_DRIVER")
-@allure.title("Запуск драйвера/браузера")
-@allure.description("Запуск теста, открытие браузера и установка ожидания на время тест-рана")
+@pytest.fixture(scope="function")
 def driver_setup():
-    with allure.step("Инициализация браузера Firefox"):
-        manager = GeckoDriverManager()
-        service = FirefoxService(manager.install())
-        driver = webdriver.Firefox(service=service)
-    with allure.step("Увеличить окно браузера"):
-        driver.maximize_window()
-    with allure.step("Открыть сайт с Интернет-магазином и ожидание на прогрузку страницы"):
-        driver.get("https://www.saucedemo.com")
-        driver.implicitly_wait(10)
-    with allure.step("Ожидание браузера до окончания теста и выход из драйвера"):
-        yield driver
-        driver.quit()
+    
+     manager = GeckoDriverManager()
+     service = FirefoxService(manager.install())
+     driver = webdriver.Firefox(service=service)
+   
+     driver.maximize_window()
+    
+     driver.get("https://www.saucedemo.com")
+     driver.implicitly_wait(10)
+    
+     yield driver
+     driver.quit()
 
 
-@allure.id("SHOP-2")
+@allure.id("SHOP-1")
 @allure.severity("P2")
 @allure.epic("Интернет магазин")
-@allure.feature("SHOP-TEST")
+@allure.feature("Оформление заказа")
 @allure.title("Тест успешного заказа в Интернет-магазине")
 @allure.description("Тест включает в себя авторизацию, добавление товаров в корзину," \
 "переход на страницу Корзины, оформление заказа и проверка итоговой цены")

@@ -6,32 +6,23 @@ from webdriver_manager.chrome import ChromeDriverManager
 import allure
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
+def driver_setup():
+     
+     manager = ChromeDriverManager()
+     service = ChromeService(manager.install())
+     driver = webdriver.Chrome(service=service)
+     driver.maximize_window()
+     driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
+     driver.implicitly_wait(10)
+     yield driver
+     driver.quit()
+
+
 @allure.id("CALC-1")
 @allure.severity("P1")
 @allure.epic("Калькулятор")
-@allure.feature("SETUP_DRIVER")
-@allure.title("Запуск драйвера/браузера")
-@allure.description("Запуск теста, открытие браузера и установка ожидания на время тест-рана")
-def driver_setup():
-    with allure.step("Инициализация браузера Chrome"):
-        manager = ChromeDriverManager()
-        service = ChromeService(manager.install())
-        driver = webdriver.Chrome(service=service)
-    with allure.step("Увеличить окно браузера"):
-        driver.maximize_window()
-    with allure.step("Открыть сайт с Калькулятором и ожидание на прогрузку страницы"):
-        driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
-        driver.implicitly_wait(10)
-    with allure.step("Ожидание браузера до окончания теста и выход из драйвера"):
-        yield driver
-        driver.quit()
-
-
-@allure.id("CALC-2")
-@allure.severity("P1")
-@allure.epic("Калькулятор")
-@allure.feature("TEST_CALCULATE")
+@allure.feature("Тест калькулятора")
 @allure.title("Запуск калькулятора")
 @allure.description("Тест функции калькулятора с установкой таймера, по истечении которого выводится ответ")
 def test_calculation(driver_setup):
